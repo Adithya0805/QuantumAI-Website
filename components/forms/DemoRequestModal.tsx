@@ -63,7 +63,7 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100]"
+                className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100]"
               />
             </Dialog.Overlay>
             <Dialog.Content asChild>
@@ -71,12 +71,12 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0A0A0F] border border-white/10 p-8 rounded-[2.5rem] shadow-[0_0_100px_rgba(0,240,255,0.15)] z-[101] focus:outline-none"
+                className="fixed left-0 right-0 bottom-0 sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[90vh] overflow-y-auto bg-[#050508] border-t sm:border border-white/10 p-6 sm:p-10 rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-[0_0_100px_rgba(0,240,255,0.15)] z-[101] focus:outline-none custom-scrollbar"
               >
-                <div className="flex justify-between items-start mb-8">
+                <div className="flex justify-between items-start mb-8 sticky top-0 bg-[#050508] py-2 z-10">
                   <div>
-                    <h2 className="text-3xl font-bold text-white mb-2 font-grotesk tracking-tight">Request Advanced Demo</h2>
-                    <p className="text-white/40 text-sm">Experience the power of edge quantum computing first-hand.</p>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 font-grotesk tracking-tight">Request Advanced Demo</h2>
+                    <p className="text-white/40 text-xs sm:text-sm">Experience the power of edge quantum computing first-hand.</p>
                   </div>
                   <Dialog.Close asChild>
                     <button className="p-2 hover:bg-white/5 rounded-full transition-colors group">
@@ -85,8 +85,8 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
                   </Dialog.Close>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     {/* Name */}
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-primary/60 ml-1">Full Name</label>
@@ -164,11 +164,11 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
 
                   {/* Message (Optional) */}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-mono uppercase tracking-widest text-primary/60 ml-1">Project Details / Message</label>
+                    <label className="text-[10px] font-mono uppercase tracking-widest text-primary/60 ml-1">Project Details</label>
                     <textarea
                       {...register("message")}
-                      rows={4}
-                      placeholder="Tell us about your quantum requirements..."
+                      rows={3}
+                      placeholder="Tell us about your requirements..."
                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-white focus:outline-none focus:border-primary transition-all resize-none"
                     />
                   </div>
