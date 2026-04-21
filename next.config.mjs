@@ -1,4 +1,3 @@
-// next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -7,6 +6,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-};
+  images: {
+    domains: ['keulkuwlnfjsiygkewty.supabase.co'],
+  },
+}
 
-export default nextConfig;
+export default nextConfig
