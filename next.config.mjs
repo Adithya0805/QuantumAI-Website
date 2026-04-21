@@ -9,4 +9,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig; // .mjs uses export default, NOT module.exports
+export default nextConfig;
