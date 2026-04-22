@@ -6,9 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { Loader2, Zap } from "lucide-react"
 import { newsletterSchema, type NewsletterInput } from "@/lib/validations"
+import SuccessModal from "@/components/ui/SuccessModal"
 
 export default function NewsletterForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const {
     register,
@@ -36,6 +38,7 @@ export default function NewsletterForm() {
         description: "You're now subscribed to the quantum newsfeed."
       })
       reset()
+      setShowSuccess(true)
     } catch (error: any) {
       toast.error("Sync Failed", {
         description: error.message
@@ -76,6 +79,12 @@ export default function NewsletterForm() {
           </>
         )}
       </button>
+      <SuccessModal 
+        isOpen={showSuccess} 
+        onClose={() => setShowSuccess(false)} 
+        title="Sync Successful"
+        message="Thank you for subscribing! We will contact you shortly with the latest updates."
+      />
     </form>
   )
 }

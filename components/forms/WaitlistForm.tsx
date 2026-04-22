@@ -8,10 +8,11 @@ import { Loader2, ArrowRight, Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import confetti from "canvas-confetti"
 import { waitlistSchema, type WaitlistInput } from "@/lib/validations"
+import SuccessModal from "@/components/ui/SuccessModal"
 
 export default function WaitlistForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const {
     register,
@@ -48,8 +49,8 @@ export default function WaitlistForm() {
         colors: ['#00F0FF', '#FF6B00', '#B537F2']
       })
 
-      setIsSuccess(true)
       reset()
+      setShowSuccess(true)
     } catch (error: any) {
       toast.error("Submission Error", {
         description: error.message
@@ -59,27 +60,6 @@ export default function WaitlistForm() {
     }
   }
 
-  if (isSuccess) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="text-center p-8 bg-white/5 border border-primary/20 rounded-2xl backdrop-blur-xl"
-      >
-        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Sparkles className="w-8 h-8 text-primary shadow-glow" />
-        </div>
-        <h3 className="text-2xl font-bold text-white mb-2">You're in the Loop!</h3>
-        <p className="text-white/60">We've added you to the exclusive quantum waitlist. Stay tuned for updates.</p>
-        <button 
-          onClick={() => setIsSuccess(false)}
-          className="mt-6 text-primary hover:text-primary/80 transition-colors uppercase text-xs font-mono tracking-widest"
-        >
-          Add Another Response
-        </button>
-      </motion.div>
-    )
-  }
 
   return (
     <form 
@@ -157,6 +137,12 @@ export default function WaitlistForm() {
       <p className="text-center text-[10px] text-white/20 font-mono">
         SECURE QUANTUM ENCRYPTION ENABLED
       </p>
+      <SuccessModal 
+        isOpen={showSuccess} 
+        onClose={() => setShowSuccess(false)} 
+        title="Waitlist Initialized"
+        message="Thank you for your response! We've added you to the exclusive quantum waitlist. We will contact you shortly."
+      />
     </form>
   )
 }

@@ -8,6 +8,7 @@ import { Loader2, Calendar, Users, X, ArrowRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import * as Dialog from "@radix-ui/react-dialog"
 import { demoSchema, type DemoInput } from "@/lib/validations"
+import SuccessModal from "@/components/ui/SuccessModal"
 
 interface DemoRequestModalProps {
   isOpen: boolean
@@ -16,6 +17,7 @@ interface DemoRequestModalProps {
 
 export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const {
     register,
@@ -44,6 +46,7 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
       })
       setIsOpen(false)
       reset()
+      setShowSuccess(true)
     } catch (error: any) {
       toast.error("Booking Error", {
         description: error.message
@@ -68,10 +71,10 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
             </Dialog.Overlay>
             <Dialog.Content asChild>
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="fixed left-0 right-0 bottom-0 sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[90vh] overflow-y-auto bg-[#050508] border-t sm:border border-white/10 p-6 sm:p-10 rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-[0_0_100px_rgba(0,240,255,0.15)] z-[101] focus:outline-none custom-scrollbar"
+                initial={{ opacity: 0, scale: 0.9, x: "-50%", y: "-40%" }}
+                animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
+                exit={{ opacity: 0, scale: 0.9, x: "-50%", y: "-40%" }}
+                className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-[#050508] border border-white/10 p-6 sm:p-10 rounded-[2.5rem] shadow-[0_0_100px_rgba(0,240,255,0.15)] z-[101] focus:outline-none custom-scrollbar"
               >
                 <div className="flex justify-between items-start mb-8 sticky top-0 bg-[#050508] py-2 z-10">
                   <div>
@@ -196,6 +199,12 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
           </Dialog.Portal>
         )}
       </AnimatePresence>
+      <SuccessModal 
+        isOpen={showSuccess} 
+        onClose={() => setShowSuccess(false)} 
+        title="Consultation Scheduled"
+        message="Thank you for your response! Our quantum engineers will reach out on your preferred date shortly."
+      />
     </Dialog.Root>
   )
 }

@@ -7,10 +7,12 @@ import { toast } from "sonner"
 import { Loader2, Send } from "lucide-react"
 import { motion } from "framer-motion"
 import { contactSchema, type ContactInput } from "@/lib/validations"
+import SuccessModal from "@/components/ui/SuccessModal"
 
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [messageLength, setMessageLength] = useState(0)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const {
     register,
@@ -39,6 +41,7 @@ export default function ContactForm() {
       })
       reset()
       setMessageLength(0)
+      setShowSuccess(true)
     } catch (error: any) {
       toast.error("Transmission Error", {
         description: error.message
@@ -141,6 +144,10 @@ export default function ContactForm() {
           ENCRYPTED VIA QUANTUM-LATTICE PROTOCOL v2.0
         </p>
       </div>
+      <SuccessModal 
+        isOpen={showSuccess} 
+        onClose={() => setShowSuccess(false)} 
+      />
     </form>
   )
 }

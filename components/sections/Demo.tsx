@@ -89,22 +89,22 @@ export default function Demo() {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           
-          <div className="relative">
+          <div className="relative flex flex-col items-center lg:items-start text-center lg:text-left">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="mb-12"
+              className="mb-12 w-full"
             >
               <h2 className="text-5xl md:text-7xl font-bold font-grotesk tracking-tighter text-white mb-8">
                 Run in <br />
                 <span className="text-gradient-cyan">Superposition</span>
               </h2>
-              <p className="text-white/40 text-lg max-w-lg mb-12">
+              <p className="text-white/40 text-lg max-w-lg mb-12 mx-auto lg:ml-0">
                 Our universal SDK bridges high-level abstraction with low-level quantum mechanics. Zero bottlenecks, absolute performance.
               </p>
 
-              <div className="flex gap-4">
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                 <button
                   onClick={runSimulation}
                   disabled={isSimulating}

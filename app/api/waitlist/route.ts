@@ -1,27 +1,29 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { waitlistSchema } from '@/lib/validations'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    
+
     // Validate input
     const validated = waitlistSchema.parse(body)
-    
-    // Insert into database
-    const { data, error } = await supabaseAdmin
+
+    const supabase = getSupabaseAdmin()
+
+    // Insert into waitlist table (no .single() – avoids PGRST116 on 0 rows)
+    const { error } = await supabase
       .from('waitlist')
       .insert({
         name: validated.name,
         email: validated.email,
-        company: validated.company,
-        use_case: validated.useCase,
+        company: validated.company || null,
+        use_case: validated.useCase || null,
       })
-      .select()
-      .single()
 
     if (error) {
+      console.error('Supabase waitlist insert error:', error)
+
       // Duplicate email conflict
       if (error.code === '23505') {
         return NextResponse.json(
@@ -29,23 +31,29 @@ export async function POST(request: Request) {
           { status: 409 }
         )
       }
-      throw error
+
+      return NextResponse.json(
+        { error: `Database error: ${error.message}` },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json(
-      { success: true, data, message: 'Welcome to the quantum future!' },
+      { success: true, message: 'Welcome to the quantum future!' },
       { status: 201 }
     )
   } catch (error: any) {
     console.error('Waitlist API Error:', error)
+
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid input data', details: error.errors },
         { status: 400 }
       )
     }
+
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error.message || 'Internal server error' },
       { status: 500 }
     )
   }

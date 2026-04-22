@@ -18,7 +18,15 @@ export async function POST(request: Request) {
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error('Supabase Insert Error:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      })
+      throw error
+    }
 
     return NextResponse.json(
       { success: true, message: 'Message sent successfully' },
