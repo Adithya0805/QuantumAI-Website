@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber"
-import { Suspense, useState, useCallback } from "react"
+import { Suspense, useState, useCallback, useEffect, useMemo } from "react"
 import { PerspectiveCamera } from "@react-three/drei"
 import { EffectComposer, Bloom, ChromaticAberration, Noise, Vignette } from "@react-three/postprocessing"
 import { BlendFunction } from "postprocessing"
@@ -16,6 +16,16 @@ interface SceneProps {
 
 export default function Scene({ children }: SceneProps) {
   const [isPaused, setIsPaused] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   const handleBlackHoleClick = useCallback(() => {
     setIsPaused(true)
@@ -31,7 +41,8 @@ export default function Scene({ children }: SceneProps) {
           powerPreference: "high-performance",
           alpha: true
         }}
-        dpr={[1, 2]}
+        dpr={isMobile ? [1, 1.5] : [1, 2]}
+        performance={{ min: 0.5 }}
       >
         <Suspense fallback={null}>
           <PerspectiveCamera makeDefault position={[0, 0, 20]} fov={45} />
@@ -40,7 +51,7 @@ export default function Scene({ children }: SceneProps) {
           <ambientLight intensity={0.1} />
           <pointLight position={[100, 100, 100]} intensity={0.5} />
           
-          <StarField />
+          <StarField count={isMobile ? 1500 : 5000} />
           
           <group onClick={handleBlackHoleClick}>
             <BlackHole isPaused={isPaused} />

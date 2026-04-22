@@ -9,6 +9,9 @@ const nextConfig = {
   images: {
     domains: ['keulkuwlnfjsiygkewty.supabase.co'],
   },
+  // experimental: {
+  //   optimizeCss: true,
+  // },
 }
 
 export default nextConfig

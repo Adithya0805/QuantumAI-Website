@@ -11,6 +11,7 @@ import LatestNews from "@/components/sections/LatestNews";
 import Testimonials from "@/components/sections/Testimonials";
 import Pricing from "@/components/sections/Pricing";
 import FAQ from "@/components/sections/FAQ";
+import Newsletter from "@/components/sections/Newsletter";
 import CTA from "@/components/sections/CTA";
 import Footer from "@/components/ui/Footer";
 import CookieConsent from "@/components/ui/CookieConsent";
@@ -32,6 +33,7 @@ export default function Home() {
       <Testimonials />
       <div id="pricing"><Pricing /></div>
       <div id="faq"><FAQ /></div>
+      <Newsletter />
       <CTA />
       <Footer />
       
@@ -41,3 +43,4 @@ export default function Home() {
     </main>
   );
 }
+

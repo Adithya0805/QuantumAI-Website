@@ -1,37 +1,26 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Lazy-initialize the admin client so a missing env var is caught
-// at request time (with a clear message) rather than at module load
-// time (which causes a cold-start crash on Vercel / Edge runtimes).
-let _adminClient: ReturnType<typeof createClient> | null = null
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-export function getSupabaseAdmin() {
-  if (_adminClient) return _adminClient
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error(
-      'Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and/or SUPABASE_SERVICE_ROLE_KEY'
-    )
-  }
-
-  _adminClient = createClient(supabaseUrl, supabaseServiceKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
-
-  return _adminClient
+if (!supabaseUrl) {
+  throw new Error('CRITICAL: NEXT_PUBLIC_SUPABASE_URL is not defined in environment variables.')
 }
 
-// Keep the named export for backwards compatibility
-export const supabaseAdmin = new Proxy({} as ReturnType<typeof createClient>, {
-  get(_target, prop) {
-    const client = getSupabaseAdmin()
-    const value = (client as any)[prop]
-    return typeof value === 'function' ? value.bind(client) : value
+if (!supabaseServiceKey) {
+  throw new Error('CRITICAL: SUPABASE_SERVICE_ROLE_KEY is not defined in environment variables.')
+}
+
+// Initialize the admin client with service role key
+// This client bypasses RLS and should only be used in server-side contexts
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
   },
 })
+
+// Export helper for cases where a fresh client might be needed or for consistency
+export function getSupabaseAdmin() {
+  return supabaseAdmin
+}

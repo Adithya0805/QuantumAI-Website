@@ -5,23 +5,26 @@ import { useFrame } from "@react-three/fiber"
 import { MeshTransmissionMaterial, Float, Text } from "@react-three/drei"
 import * as THREE from "three"
 
-export default function AIChip() {
+interface AIChipProps {
+  scrollProgress?: number
+}
+
+export default function AIChip({ scrollProgress = 0 }: AIChipProps) {
   const group = useRef<THREE.Group>(null!)
   const coreRef = useRef<THREE.Mesh>(null!)
-  
-  // Procedural geometry for the chip substrate
   
   useFrame((state) => {
     const t = state.clock.getElapsedTime()
     if (group.current) {
-      group.current.rotation.y = Math.sin(t * 0.2) * 0.1
-      group.current.rotation.x = Math.cos(t * 0.2) * 0.1
+      // Base floating animation + scroll-based rotation
+      group.current.rotation.y = Math.sin(t * 0.2) * 0.1 + (scrollProgress * Math.PI * 0.5)
+      group.current.rotation.x = Math.cos(t * 0.2) * 0.1 + (scrollProgress * 0.2)
     }
     
-    // Core pulse effect
+    // Core pulse effect synced with scroll
     if (coreRef.current) {
       const coreMaterial = coreRef.current.material as THREE.MeshStandardMaterial
-      coreMaterial.emissiveIntensity = 2 + Math.sin(t * 4) * 1.5
+      coreMaterial.emissiveIntensity = 2 + Math.sin(t * 4) * 1.5 + (scrollProgress * 5)
     }
   })
 
@@ -64,7 +67,7 @@ export default function AIChip() {
         </mesh>
 
         {/* Inner Logic Gates (Animated Lines) */}
-        <LogicLines />
+        <LogicLines intensity={1 + scrollProgress * 2} />
 
         {/* Tech Labels */}
         <Text
@@ -81,7 +84,7 @@ export default function AIChip() {
   )
 }
 
-function LogicLines() {
+function LogicLines({ intensity = 1 }) {
   const lines = useMemo(() => {
     const list = []
     for (let i = 0; i < 20; i++) {
@@ -98,9 +101,16 @@ function LogicLines() {
       {lines.map((line, i) => (
         <mesh key={i} position={[line.x, 0, line.z]}>
           <boxGeometry args={[line.vertical ? 0.02 : line.length, 0.01, line.vertical ? line.length : 0.02]} />
-          <meshStandardMaterial color="#00F0FF" emissive="#00F0FF" emissiveIntensity={1} transparent opacity={0.6} />
+          <meshStandardMaterial 
+            color="#00F0FF" 
+            emissive="#00F0FF" 
+            emissiveIntensity={intensity} 
+            transparent 
+            opacity={0.6} 
+          />
         </mesh>
       ))}
     </group>
   )
 }
+

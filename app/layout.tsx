@@ -7,6 +7,8 @@ import Navbar from "@/components/ui/Navbar";
 import CustomCursor from "@/components/ui/CustomCursor";
 import { Toaster } from "sonner";
 import ScrollProgress from "../components/ui/ScrollProgress";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk" });
@@ -37,9 +39,12 @@ export default function RootLayout({
             {children}
             <CustomCursor />
             <Toaster position="bottom-right" theme="dark" />
+            <Analytics />
+            <SpeedInsights />
           </LenisProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+

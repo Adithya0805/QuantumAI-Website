@@ -1,39 +1,62 @@
 import { NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase/admin'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { waitlistSchema } from '@/lib/validations'
 
 export async function POST(request: Request) {
+  // Check for environment variables at the start of the handler
+  console.log('API Initialization: NEXT_PUBLIC_SUPABASE_URL presence:', !!process.env.NEXT_PUBLIC_SUPABASE_URL)
+  console.log('API Initialization: SUPABASE_SERVICE_ROLE_KEY presence:', !!process.env.SUPABASE_SERVICE_ROLE_KEY)
+
   try {
     const body = await request.json()
 
-    // Validate input
-    const validated = waitlistSchema.parse(body)
+    // Validate input using Zod
+    const validationResult = waitlistSchema.safeParse(body)
+    if (!validationResult.success) {
+      console.warn('Waitlist Validation Failed:', validationResult.error.format())
+      return NextResponse.json(
+        { 
+          error: 'Invalid input data', 
+          details: validationResult.error.errors 
+        },
+        { status: 400 }
+      )
+    }
 
-    const supabase = getSupabaseAdmin()
+    const { name, email, company, useCase } = validationResult.data
 
-    // Insert into waitlist table (no .single() – avoids PGRST116 on 0 rows)
-    const { error } = await supabase
+    // Check if Supabase Admin is available (should throw at module load if not, but safe check)
+    if (!supabaseAdmin) {
+      console.error('CRITICAL: supabaseAdmin is not initialized')
+      return NextResponse.json(
+        { error: 'Database service is currently unavailable' },
+        { status: 503 }
+      )
+    }
+
+    // Insert into waitlist table
+    const { error } = await supabaseAdmin
       .from('waitlist')
       .insert({
-        name: validated.name,
-        email: validated.email,
-        company: validated.company || null,
-        use_case: validated.useCase || null,
+        name,
+        email,
+        company: company || null,
+        use_case: useCase || null,
       })
 
     if (error) {
-      console.error('Supabase waitlist insert error:', error)
+      console.error('Supabase Error (Waitlist Insert):', error)
 
-      // Duplicate email conflict
+      // Handle duplicate email (PostgreSQL error code 23505)
       if (error.code === '23505') {
         return NextResponse.json(
-          { error: 'You are already on the waitlist! 🚀' },
+          { error: 'This email is already on the waitlist 🚀' },
           { status: 409 }
         )
       }
 
       return NextResponse.json(
-        { error: `Database error: ${error.message}` },
+        { error: `Database Error: ${error.message}` },
         { status: 500 }
       )
     }
@@ -42,19 +65,13 @@ export async function POST(request: Request) {
       { success: true, message: 'Welcome to the quantum future!' },
       { status: 201 }
     )
-  } catch (error: any) {
-    console.error('Waitlist API Error:', error)
-
-    if (error.name === 'ZodError') {
-      return NextResponse.json(
-        { error: 'Invalid input data', details: error.errors },
-        { status: 400 }
-      )
-    }
+  } catch (err: any) {
+    console.error('Waitlist API Fatal Error:', err)
 
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: err.message || 'An unexpected error occurred during registration' },
       { status: 500 }
     )
   }
 }
+

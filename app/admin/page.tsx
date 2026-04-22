@@ -1,163 +1,198 @@
-import { supabaseAdmin } from '@/lib/supabase/admin'
-import { format } from 'date-fns'
+import { supabaseAdmin } from "@/lib/supabase/admin"
+import { format } from "date-fns"
 import { 
   Users, 
   Mail, 
   MessageSquare, 
-  Zap, 
-  TrendingUp, 
-  Download,
-  CheckCircle2,
+  Calendar, 
+  CheckCircle2, 
   Clock,
-  Calendar
-} from 'lucide-react'
+  ArrowUpRight
+} from "lucide-react"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
-async function getStats() {
-  const [waitlist, contact, newsletter, demo] = await Promise.all([
-    supabaseAdmin.from('waitlist').select('*', { count: 'exact' }),
-    supabaseAdmin.from('contact_messages').select('*', { count: 'exact' }),
-    supabaseAdmin.from('newsletter_subscribers').select('*', { count: 'exact' }),
-    supabaseAdmin.from('demo_requests').select('*', { count: 'exact' }),
+async function getData() {
+  const [waitlist, newsletter, contact, demo] = await Promise.all([
+    supabaseAdmin.from("waitlist").select("*").order("created_at", { ascending: false }),
+    supabaseAdmin.from("newsletter_subscribers").select("*").order("subscribed_at", { ascending: false }),
+    supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }),
+    supabaseAdmin.from("demo_requests").select("*").order("created_at", { ascending: false }),
   ])
 
   return {
-    waitlist: { data: waitlist.data || [], count: waitlist.count || 0 },
-    contact: { data: contact.data || [], count: contact.count || 0 },
-    newsletter: { data: newsletter.data || [], count: newsletter.count || 0 },
-    demo: { data: demo.data || [], count: demo.count || 0 },
+    waitlist: waitlist.data || [],
+    newsletter: newsletter.data || [],
+    contact: contact.data || [],
+    demo: demo.data || []
   }
 }
 
 export default async function AdminDashboard() {
-  const stats = await getStats()
+  const data = await getData()
 
-  const cards = [
-    { label: 'Waitlist', count: stats.waitlist.count, icon: Users, color: 'text-cyan-400' },
-    { label: 'Demo Requests', count: stats.demo.count, icon: Zap, color: 'text-purple-400' },
-    { label: 'Messages', count: stats.contact.count, icon: MessageSquare, color: 'text-orange-400' },
-    { label: 'Subscribers', count: stats.newsletter.count, icon: Mail, color: 'text-emerald-400' },
+  const stats = [
+    { label: "Waitlist", value: data.waitlist.length, icon: Users, color: "text-blue-400" },
+    { label: "Newsletters", value: data.newsletter.length, icon: Mail, color: "text-purple-400" },
+    { label: "Contacts", value: data.contact.length, icon: MessageSquare, color: "text-green-400" },
+    { label: "Demos", value: data.demo.length, icon: Calendar, color: "text-orange-400" },
   ]
 
   return (
-    <div className="min-h-screen bg-[#050508] text-white p-8 font-sans">
+    <div className="min-h-screen bg-[#020205] pt-32 pb-20 px-6 relative overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] -z-10" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[150px] -z-10" />
+
       <div className="max-w-7xl mx-auto space-y-12">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-bold font-grotesk tracking-tight text-white/90">
-              Nexus <span className="text-primary">Control</span>
+            <h1 className="text-4xl md:text-5xl font-black font-grotesk tracking-tight text-white uppercase italic">
+              Command <span className="text-gradient-cyan">Center</span>
             </h1>
-            <p className="text-white/40 text-sm font-mono mt-1">QUANTUMAI INFRASTRUCTURE MONITOR v1.0.4</p>
+            <p className="text-white/40 font-mono text-xs uppercase tracking-[0.3em] mt-2">Quantum Submissions Overview</p>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest hover:bg-white/10 transition-all">
-              <Download className="w-4 h-4" /> Export CSV
-            </button>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-mono text-primary uppercase">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> Live Status: Synced
-            </div>
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest">System Online</span>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cards.map((card) => (
-            <div key={card.label} className="p-6 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl group hover:border-primary/50 transition-all">
-              <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-2xl bg-white/5 ${card.color}`}>
-                  <card.icon className="w-6 h-6" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {stats.map((stat, i) => (
+            <div key={i} className="glass p-6 rounded-3xl border border-white/5 hover:border-white/10 transition-all group">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-3 rounded-2xl bg-white/5 ${stat.color}`}>
+                  <stat.icon className="w-5 h-5" />
                 </div>
-                <TrendingUp className="w-4 h-4 text-white/20 group-hover:text-primary transition-colors" />
+                <ArrowUpRight className="w-4 h-4 text-white/20 group-hover:text-white transition-colors" />
               </div>
-              <p className="text-3xl font-bold font-mono text-white/90">{card.count}</p>
-              <p className="text-xs font-mono uppercase tracking-widest text-white/30 mt-1">{card.label}</p>
+              <div className="text-3xl font-black text-white mb-1 tracking-tight">{stat.value}</div>
+              <div className="text-[10px] font-mono text-white/40 uppercase tracking-widest">{stat.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Tables Section */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          {/* Recent Waitlist */}
-          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <Users className="w-5 h-5 text-cyan-400" /> Recent Waitlist
-            </h2>
-            <div className="space-y-4">
-              {stats.waitlist.data.slice(0, 5).map((item: any) => (
-                <div key={item.id} className="flex items-center justify-between p-4 rounded-2xl bg-black/40 border border-white/5">
-                  <div>
-                    <p className="text-sm font-medium text-white/90">{item.name || 'Anonymous'}</p>
-                    <p className="text-xs text-white/30">{item.email}</p>
+        {/* Content Tabs / Scroll Areas */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          {/* Waitlist Table */}
+          <SectionContainer title="Waitlist Submissions" icon={Users}>
+            <div className="divide-y divide-white/5">
+              {data.waitlist.map((item: any) => (
+                <div key={item.id} className="py-4 flex items-center justify-between group">
+                  <div className="space-y-1">
+                    <div className="text-sm font-bold text-white group-hover:text-primary transition-colors">{item.name}</div>
+                    <div className="text-xs text-white/40 font-mono">{item.email}</div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-mono text-white/20 uppercase">
-                      {item.created_at ? format(new Date(item.created_at), 'MMM dd, HH:mm') : 'N/A'}
-                    </p>
-                    <span className="text-[9px] font-mono text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-full uppercase">
-                      {item.status}
-                    </span>
+                    <div className="text-[10px] font-mono text-white/20 uppercase tracking-widest">
+                      {item.use_case || 'General'}
+                    </div>
+                    <div className="text-[9px] text-white/10 mt-1">
+                      {format(new Date(item.created_at), 'MMM dd, HH:mm')}
+                    </div>
                   </div>
                 </div>
               ))}
-              {stats.waitlist.count === 0 && <p className="text-center text-white/20 py-8 italic">No entries yet.</p>}
             </div>
-          </div>
+          </SectionContainer>
 
-          {/* Recent Demo Requests */}
-          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <Zap className="w-5 h-5 text-purple-400" /> Demo Inbound
-            </h2>
-            <div className="space-y-4">
-              {stats.demo.data.slice(0, 5).map((item: any) => (
-                <div key={item.id} className="flex items-center justify-between p-4 rounded-2xl bg-black/40 border border-white/5">
-                  <div>
-                    <p className="text-sm font-medium text-white/90">{item.name}</p>
-                    <p className="text-xs text-white/30">{item.company} • {item.team_size}</p>
+          {/* Demo Requests */}
+          <SectionContainer title="Demo Requests" icon={Calendar}>
+            <div className="divide-y divide-white/5">
+              {data.demo.map((item: any) => (
+                <div key={item.id} className="py-4 space-y-2 group">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm font-bold text-white group-hover:text-orange-400 transition-colors">{item.name}</div>
+                    <StatusBadge status={item.status} />
                   </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-mono text-purple-400 uppercase flex items-center justify-end gap-1">
-                      <Calendar className="w-3 h-3" /> {item.preferred_date || 'TBD'}
-                    </p>
-                    <span className="text-[9px] font-mono text-white/20 uppercase border border-white/20 px-2 py-0.5 rounded-full">
-                      {item.status}
-                    </span>
+                  <div className="flex items-center justify-between text-[10px] font-mono text-white/40 uppercase tracking-wider">
+                    <span>{item.company}</span>
+                    <span>{item.team_size} Team</span>
                   </div>
-                </div>
-              ))}
-              {stats.demo.count === 0 && <p className="text-center text-white/20 py-8 italic">No requests yet.</p>}
-            </div>
-          </div>
-        </div>
-
-        {/* Messages Feed */}
-        <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl">
-          <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-orange-400" /> Secure Messages
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {stats.contact.data.slice(0, 6).map((item: any) => (
-              <div key={item.id} className="p-5 rounded-2xl bg-black/40 border border-white/5 relative group">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
-                  <p className="text-[9px] font-mono text-white/20 uppercase">
-                    {item.created_at ? format(new Date(item.created_at), 'MMM dd') : 'N/A'}
+                  <p className="text-xs text-white/30 line-clamp-2 bg-white/5 p-2 rounded-lg italic">
+                    "{item.message}"
                   </p>
                 </div>
-                <h3 className="text-sm font-bold text-white/90 truncate mb-1">{item.subject}</h3>
-                <p className="text-xs text-white/40 line-clamp-2 mb-4">"{item.message}"</p>
-                <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
-                  <p className="text-[10px] font-medium text-white/60">{item.name}</p>
-                  <button className="text-[10px] text-primary hover:underline font-mono">ENCRYPTED</button>
+              ))}
+            </div>
+          </SectionContainer>
+
+          {/* Contact Messages */}
+          <SectionContainer title="Messages" icon={MessageSquare}>
+            <div className="divide-y divide-white/5">
+              {data.contact.map((item: any) => (
+                <div key={item.id} className="py-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm font-bold text-white italic">"{item.subject}"</div>
+                    <div className="text-[9px] text-white/20 font-mono">
+                      {format(new Date(item.created_at), 'MMM dd, HH:mm')}
+                    </div>
+                  </div>
+                  <p className="text-xs text-white/50 leading-relaxed">{item.message}</p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center">
+                        <Mail className="w-2 h-2 text-primary" />
+                    </div>
+                    <span className="text-[10px] text-white/40 font-mono">{item.email}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
-            {stats.contact.count === 0 && <div className="col-span-full text-center text-white/20 py-8 italic border border-dashed border-white/10 rounded-2xl">Inbox Zero reached.</div>}
-          </div>
+              ))}
+            </div>
+          </SectionContainer>
+
+          {/* Newsletter Subscribers */}
+          <SectionContainer title="Newsletter Pulse" icon={Mail}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.newsletter.map((item: any) => (
+                <div key={item.id} className="bg-white/5 p-4 rounded-2xl border border-white/5 flex flex-col justify-between group hover:border-primary/20 transition-all">
+                  <div className="text-xs font-bold text-white truncate mb-2">{item.email}</div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <div className={`w-1.5 h-1.5 rounded-full ${item.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
+                      <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">
+                        {item.is_active ? 'Active' : 'Unsubscribed'}
+                      </span>
+                    </div>
+                    <span className="text-[8px] text-white/10 font-mono">
+                        {format(new Date(item.subscribed_at), 'MM.dd.yy')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </SectionContainer>
+
         </div>
       </div>
+    </div>
+  )
+}
+
+function SectionContainer({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) {
+  return (
+    <div className="glass p-8 rounded-[2.5rem] border border-white/5 relative overflow-hidden flex flex-col max-h-[500px]">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="p-2.5 rounded-xl bg-white/5">
+          <Icon className="w-4 h-4 text-white/60" />
+        </div>
+        <h2 className="text-xl font-bold text-white font-grotesk tracking-tight uppercase italic">{title}</h2>
+      </div>
+      <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const isPending = status === 'pending'
+  return (
+    <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-[8px] font-mono uppercase tracking-widest bg-white/5 ${isPending ? 'text-orange-400' : 'text-green-400'}`}>
+      {isPending ? <Clock className="w-2.5 h-2.5" /> : <CheckCircle2 className="w-2.5 h-2.5" />}
+      {status}
     </div>
   )
 }

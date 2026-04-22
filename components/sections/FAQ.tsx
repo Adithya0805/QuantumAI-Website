@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
+import { useState, useMemo } from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const Accordion = AccordionPrimitive.Root
@@ -13,7 +14,7 @@ const AccordionItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
-    className={cn("border-b border-white/10", className)}
+    className={cn("border-b border-white/5", className)}
     {...props}
   />
 ))
@@ -27,12 +28,12 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between py-8 text-left text-xl font-bold transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180 text-white font-grotesk",
+        "flex flex-1 items-center justify-between py-8 text-left text-xl font-bold transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180 text-white font-grotesk group",
         className
       )}
       {...props}
     >
-      {children}
+      <span className="group-hover:translate-x-2 transition-transform duration-300">{children}</span>
       <ChevronDown className="h-5 w-5 shrink-0 text-white/40 transition-transform duration-200" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
@@ -48,7 +49,7 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden text-lg transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("pb-8 pt-0 text-white/50 leading-relaxed", className)}>{children}</div>
+    <div className={cn("pb-8 pt-0 text-white/50 leading-relaxed font-medium", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ))
 AccordionContent.displayName = AccordionPrimitive.Content.displayName
@@ -77,23 +78,80 @@ const faqItems = [
 ]
 
 export default function FAQ() {
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredItems = useMemo(() => {
+    return faqItems.filter(item => 
+      item.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.a.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [searchQuery])
+
   return (
-    <section className="py-32 px-6 bg-black">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-6xl font-bold font-grotesk text-white">FAQ</h2>
-          <p className="mt-4 text-white/40">Everything you need to know about the future of computing.</p>
+    <section className="py-32 px-6 relative z-30 overflow-hidden">
+      {/* Background Eclipse effect localized to this section to hide the fixed starfield behind content */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#020205] -z-10 opacity-60 blur-3xl rounded-full" />
+      
+      <div className="max-w-3xl mx-auto relative z-10">
+        <div className="text-center mb-20 space-y-6">
+          <h2 className="text-4xl md:text-6xl font-black font-grotesk text-white uppercase italic tracking-tight">
+            Everything You <span className="text-gradient-cyan">Need To Know</span>
+          </h2>
+          <p className="mt-4 text-white/40 font-mono text-xs uppercase tracking-[0.3em]">Scientific Briefing & FAQ</p>
+          
+          {/* Search Filter */}
+          <div className="max-w-md mx-auto relative group mt-12">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
+            <input 
+                type="text"
+                placeholder="Search questions..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-12 pr-12 text-white focus:outline-none focus:border-primary/50 transition-all backdrop-blur-3xl shadow-2xl"
+            />
+            {searchQuery && (
+                <button 
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-white/10 transition-colors"
+                >
+                    <X className="w-4 h-4 text-white/40" />
+                </button>
+            )}
+          </div>
         </div>
 
-        <Accordion type="single" collapsible className="w-full">
-          {faqItems.map((item, i) => (
-            <AccordionItem key={i} value={`item-${i}`}>
-              <AccordionTrigger>{item.q}</AccordionTrigger>
-              <AccordionContent>{item.a}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <div className="glass-morphism rounded-[3rem] p-10 md:p-16 relative overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          {/* Subtle background glow */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[100px]" />
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-purple-500/10 rounded-full blur-[100px]" />
+          
+          <Accordion type="single" collapsible className="w-full">
+            {filteredItems.length > 0 ? (
+              filteredItems.map((item, i) => (
+                <AccordionItem key={i} value={`item-${i}`} className="border-white/10">
+                    <AccordionTrigger className="text-left py-10">{item.q}</AccordionTrigger>
+                    <AccordionContent className="text-lg">{item.a}</AccordionContent>
+                </AccordionItem>
+              ))
+            ) : (
+                <div className="py-12 text-center">
+                    <p className="text-white/40 font-mono text-sm uppercase tracking-widest">No matching frequencies found</p>
+                </div>
+            )}
+          </Accordion>
+        </div>
       </div>
+
+      <style jsx>{`
+        .glass-morphism {
+          background: rgba(10, 10, 15, 0.85); /* Darker background to separate from starfield */
+          backdrop-filter: blur(40px);
+          -webkit-backdrop-filter: blur(40px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+      `}</style>
     </section>
+
   )
 }
+

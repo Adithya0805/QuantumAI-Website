@@ -4,18 +4,18 @@ import { useRef, useMemo, useState, useEffect } from "react"
 import { useFrame } from "@react-three/fiber"
 import * as THREE from "three"
 
-const STAR_COUNT = 5000
+const DEFAULT_STAR_COUNT = 5000
 
-export default function StarField() {
+export default function StarField({ count = DEFAULT_STAR_COUNT }) {
   const points = useRef<THREE.Points>(null!)
   const [scale, setScale] = useState(1)
   const lastTapTime = useRef(0)
 
   // Generate star positions
   const [positions, sizes] = useMemo(() => {
-    const pos = new Float32Array(STAR_COUNT * 3)
-    const sz = new Float32Array(STAR_COUNT)
-    for (let i = 0; i < STAR_COUNT; i++) {
+    const pos = new Float32Array(count * 3)
+    const sz = new Float32Array(count)
+    for (let i = 0; i < count; i++) {
       // Sphere distribution for a more immersive feel
       const r = 50 + Math.random() * 50
       const theta = Math.random() * Math.PI * 2
