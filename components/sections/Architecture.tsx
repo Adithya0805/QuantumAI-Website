@@ -2,11 +2,10 @@
 
 import React, { useEffect, useRef, useState } from "react"
 import gsap from "@/lib/gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Canvas } from "@react-three/fiber"
 import { Suspense } from "react"
 import AIChip from "@/components/3d/AIChip"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 
 const ARCH_LAYERS = [
   { 
@@ -186,5 +185,3 @@ export default function Architecture() {
     </div>
   )
 }
-
-

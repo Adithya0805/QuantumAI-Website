@@ -1,10 +1,4 @@
-// This file was created to simulate a failure point in the project.
-// It contains a type error to trigger a build or lint failure.
-
-export const simulateFailure = () => {
-  const x: number = "This is a string, not a number";
-  return x;
+// This file is a placeholder for future utility functions.
+export const utils = {
+  version: "1.0.0",
 };
-
-// Also, a console log which might be flagged by some lint rules
-console.log("Failure simulated");

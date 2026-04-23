@@ -42,7 +42,7 @@ export default function ContactForm() {
       reset()
       setMessageLength(0)
       setShowSuccess(true)
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Transmission Error", {
         description: error.message
       })

@@ -4,6 +4,8 @@ import React from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
+import Image from "next/image"
+
 const cases = [
   {
     title: "Autonomous Systems",
@@ -77,7 +79,7 @@ export default function UseCases() {
               
               {item.image && (
                 <div className="absolute inset-0 opacity-20 transition-transform duration-700 group-hover:scale-110">
-                  <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                  <Image src={item.image} alt={item.title} fill className="object-cover" />
                 </div>
               )}
 

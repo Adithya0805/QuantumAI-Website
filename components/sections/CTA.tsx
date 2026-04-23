@@ -2,8 +2,6 @@
 
 import React from "react"
 import { motion } from "framer-motion"
-import GlowButton from "@/components/ui/GlowButton"
-import { ArrowRight, Mail } from "lucide-react"
 import WaitlistForm from "@/components/forms/WaitlistForm"
 
 export default function CTA() {

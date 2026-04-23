@@ -1,8 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Zap, Shield, Cpu, Activity, Code, Layers, ArrowRight, RotateCcw } from "lucide-react"
-import { motion } from "framer-motion"
+import { Zap, Shield, Cpu, Activity, Code, Layers, ArrowRight } from "lucide-react"
 import GlassCard from "@/components/ui/GlassCard"
 import DemoRequestModal from "@/components/forms/DemoRequestModal"
 

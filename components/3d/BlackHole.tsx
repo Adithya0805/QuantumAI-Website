@@ -66,7 +66,7 @@ export default function BlackHole({ isPaused = false }) {
     if (!isPaused && diskRef.current) {
       // Disk rotation and time update
       diskRef.current.rotation.z += delta * 0.5
-      // @ts-ignore
+      // @ts-expect-error - uTime is a custom uniform
       diskRef.current.material.uTime = state.clock.elapsedTime
     }
     
@@ -94,7 +94,7 @@ export default function BlackHole({ isPaused = false }) {
       {/* Accretion Disk */}
       <mesh ref={diskRef} rotation={[-Math.PI / 2.5, 0, 0]}>
         <planeGeometry args={[10, 10, 32, 32]} />
-        {/* @ts-ignore */}
+        {/* @ts-expect-error - Custom shader material tag */}
         <accretionDiskMaterial transparent blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
       

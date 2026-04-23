@@ -28,11 +28,11 @@ export default function StarField({ count = DEFAULT_STAR_COUNT }) {
       sz[i] = Math.random() * 0.15
     }
     return [pos, sz]
-  }, [])
+  }, [count])
 
   // Double tap to toggle scale
   useEffect(() => {
-    const handleDoubleTap = (e: MouseEvent | TouchEvent) => {
+    const handleDoubleTap = () => {
       const now = Date.now()
       if (now - lastTapTime.current < 300) {
         setScale(prev => (prev === 1 ? 2.5 : 1))
@@ -44,7 +44,7 @@ export default function StarField({ count = DEFAULT_STAR_COUNT }) {
     return () => window.removeEventListener("click", handleDoubleTap)
   }, [])
 
-  useFrame((state) => {
+  useFrame(() => {
     if (points.current) {
       points.current.rotation.y += 0.0001
       points.current.rotation.x += 0.00005

@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber"
-import { Suspense, useState, useCallback, useEffect, useMemo } from "react"
+import { Suspense, useState, useCallback, useEffect } from "react"
 import { PerspectiveCamera } from "@react-three/drei"
 import { EffectComposer, Bloom, ChromaticAberration, Noise, Vignette } from "@react-three/postprocessing"
 import { BlendFunction } from "postprocessing"

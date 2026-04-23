@@ -34,7 +34,7 @@ export default function WaitlistForm() {
         description: "You've been added to the quantum hardware waitlist."
       })
       reset()
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong", {
         description: "Please try again or contact support."
       })

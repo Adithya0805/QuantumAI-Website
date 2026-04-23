@@ -27,7 +27,7 @@ export default function SuccessModal({
 
       const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min
 
-      const interval: any = setInterval(function() {
+      const interval = setInterval(function() {
         const timeLeft = animationEnd - Date.now()
 
         if (timeLeft <= 0) {

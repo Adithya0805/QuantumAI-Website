@@ -47,9 +47,9 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
       setIsOpen(false)
       reset()
       setShowSuccess(true)
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Booking Error", {
-        description: error.message
+        description: (error as Error).message
       })
     } finally {
       setIsSubmitting(false)

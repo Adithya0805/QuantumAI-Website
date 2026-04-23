@@ -39,7 +39,7 @@ export default function NewsletterForm() {
       })
       reset()
       setShowSuccess(true)
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Sync Failed", {
         description: error.message
       })

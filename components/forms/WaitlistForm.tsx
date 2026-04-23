@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { Loader2, ArrowRight, CheckCircle2, Share2, Mail } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import confetti from "canvas-confetti"
 import { waitlistSchema, type WaitlistInput } from "@/lib/validations"
 
@@ -55,7 +55,7 @@ export default function WaitlistForm() {
 
       reset()
       setShowSuccess(true)
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Submission Error", {
         description: error.message
       })
@@ -92,11 +92,11 @@ export default function WaitlistForm() {
 
         <div className="space-y-4">
           <h2 className="text-3xl font-black uppercase tracking-tighter text-white">
-            You're In The <span className="text-gradient-cyan">Quantum Future</span>
+            You&apos;re In The <span className="text-gradient-cyan">Quantum Future</span>
           </h2>
           <div className="flex items-center justify-center gap-2 text-white/50 font-mono text-sm">
             <Mail className="w-4 h-4" />
-            <span>We'll reach you at <span className="text-white">{submittedEmail}</span></span>
+            <span>We&apos;ll reach you at <span className="text-white">{submittedEmail}</span></span>
           </div>
         </div>
 

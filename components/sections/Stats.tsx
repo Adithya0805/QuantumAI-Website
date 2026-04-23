@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from "react"
 import gsap from "@/lib/gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 const stats = [
   { label: "Faster Inference", value: 1000, suffix: "x", prefix: "" },

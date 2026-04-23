@@ -2,13 +2,12 @@
 
 import React from "react"
 import { motion } from "framer-motion"
-import { Play, ArrowRight, MousePointer2 } from "lucide-react"
+import { Play, ArrowRight } from "lucide-react"
 import Scene from "@/components/3d/Scene"
 import GlowButton from "@/components/ui/GlowButton"
 import VideoModal from "@/components/ui/VideoModal"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog"
 import WaitlistForm from "@/components/forms/WaitlistForm";
-import DemoRequestModal from "@/components/forms/DemoRequestModal";
 
 export default function Hero() {
   const [isVideoOpen, setIsVideoOpen] = React.useState(false);
