@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
 
+export const dynamic = 'force-dynamic'
+
 type TableResult = { ok: true; rowCount: number | null } | { ok: false; error: string; code: string }
 
 type HealthResults = {
