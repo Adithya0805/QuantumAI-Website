@@ -4,13 +4,13 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder_key'
 
-// We only throw in production if it's missing (to avoid silent failures in Vercel)
+// We only warn in production if it's missing (to avoid build crashes in Vercel)
 if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.CI) {
-  throw new Error('CRITICAL: NEXT_PUBLIC_SUPABASE_URL is not defined in environment variables.')
+  console.warn('Supabase URL missing')
 }
 
 if (process.env.NODE_ENV === 'production' && !process.env.SUPABASE_SERVICE_ROLE_KEY && !process.env.CI) {
-  throw new Error('CRITICAL: SUPABASE_SERVICE_ROLE_KEY is not defined in environment variables.')
+  console.warn('Supabase service key missing')
 }
 
 // Initialize the admin client with service role key
