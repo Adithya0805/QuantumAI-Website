@@ -33,18 +33,19 @@ export async function POST(request: Request) {
       { success: true, message: 'Demo request submitted! We will contact you soon.' },
       { status: 201 }
     )
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Demo API Error:', error)
 
-    if (error.name === 'ZodError') {
+    if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
-        { error: 'Invalid input data', details: error.errors },
+        { error: 'Invalid input data' },
         { status: 400 }
       )
     }
 
+    const message = error instanceof Error ? error.message : 'Failed to submit demo request'
     return NextResponse.json(
-      { error: error.message || 'Failed to submit demo request' },
+      { error: message },
       { status: 500 }
     )
   }

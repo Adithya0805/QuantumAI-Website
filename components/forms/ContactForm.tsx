@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { Loader2, Send } from "lucide-react"
-import { motion } from "framer-motion"
 import { contactSchema, type ContactInput } from "@/lib/validations"
 import SuccessModal from "@/components/ui/SuccessModal"
 

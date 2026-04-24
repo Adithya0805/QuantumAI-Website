@@ -7,10 +7,46 @@ import {
   Calendar, 
   CheckCircle2, 
   Clock,
-  ArrowUpRight
+  ArrowUpRight,
+  LucideIcon
 } from "lucide-react"
 
 export const dynamic = "force-dynamic"
+
+type WaitlistItem = {
+  id: string
+  name: string
+  email: string
+  use_case?: string
+  created_at: string
+}
+
+type DemoItem = {
+  id: string
+  name: string
+  email: string
+  company?: string
+  team_size?: string
+  message?: string
+  status: string
+  created_at: string
+}
+
+type ContactItem = {
+  id: string
+  name: string
+  email: string
+  subject?: string
+  message: string
+  created_at: string
+}
+
+type NewsletterItem = {
+  id: string
+  email: string
+  is_active: boolean
+  subscribed_at: string
+}
 
 async function getData() {
   const [waitlist, newsletter, contact, demo] = await Promise.all([
@@ -21,10 +57,10 @@ async function getData() {
   ])
 
   return {
-    waitlist: waitlist.data || [],
-    newsletter: newsletter.data || [],
-    contact: contact.data || [],
-    demo: demo.data || []
+    waitlist: (waitlist.data || []) as WaitlistItem[],
+    newsletter: (newsletter.data || []) as NewsletterItem[],
+    contact: (contact.data || []) as ContactItem[],
+    demo: (demo.data || []) as DemoItem[]
   }
 }
 
@@ -80,7 +116,7 @@ export default async function AdminDashboard() {
           {/* Waitlist Table */}
           <SectionContainer title="Waitlist Submissions" icon={Users}>
             <div className="divide-y divide-white/5">
-              {data.waitlist.map((item: any) => (
+              {data.waitlist.map((item) => (
                 <div key={item.id} className="py-4 flex items-center justify-between group">
                   <div className="space-y-1">
                     <div className="text-sm font-bold text-white group-hover:text-primary transition-colors">{item.name}</div>
@@ -102,7 +138,7 @@ export default async function AdminDashboard() {
           {/* Demo Requests */}
           <SectionContainer title="Demo Requests" icon={Calendar}>
             <div className="divide-y divide-white/5">
-              {data.demo.map((item: any) => (
+              {data.demo.map((item) => (
                 <div key={item.id} className="py-4 space-y-2 group">
                   <div className="flex items-center justify-between">
                     <div className="text-sm font-bold text-white group-hover:text-orange-400 transition-colors">{item.name}</div>
@@ -113,7 +149,7 @@ export default async function AdminDashboard() {
                     <span>{item.team_size} Team</span>
                   </div>
                   <p className="text-xs text-white/30 line-clamp-2 bg-white/5 p-2 rounded-lg italic">
-                    "{item.message}"
+                    &quot;{item.message}&quot;
                   </p>
                 </div>
               ))}
@@ -123,10 +159,10 @@ export default async function AdminDashboard() {
           {/* Contact Messages */}
           <SectionContainer title="Messages" icon={MessageSquare}>
             <div className="divide-y divide-white/5">
-              {data.contact.map((item: any) => (
+              {data.contact.map((item) => (
                 <div key={item.id} className="py-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm font-bold text-white italic">"{item.subject}"</div>
+                    <div className="text-sm font-bold text-white italic">&quot;{item.subject}&quot;</div>
                     <div className="text-[9px] text-white/20 font-mono">
                       {format(new Date(item.created_at), 'MMM dd, HH:mm')}
                     </div>
@@ -146,7 +182,7 @@ export default async function AdminDashboard() {
           {/* Newsletter Subscribers */}
           <SectionContainer title="Newsletter Pulse" icon={Mail}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data.newsletter.map((item: any) => (
+              {data.newsletter.map((item) => (
                 <div key={item.id} className="bg-white/5 p-4 rounded-2xl border border-white/5 flex flex-col justify-between group hover:border-primary/20 transition-all">
                   <div className="text-xs font-bold text-white truncate mb-2">{item.email}</div>
                   <div className="flex items-center justify-between">
@@ -171,7 +207,7 @@ export default async function AdminDashboard() {
   )
 }
 
-function SectionContainer({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) {
+function SectionContainer({ title, icon: Icon, children }: { title: string, icon: LucideIcon, children: React.ReactNode }) {
   return (
     <div className="glass p-8 rounded-[2.5rem] border border-white/5 relative overflow-hidden flex flex-col max-h-[500px]">
       <div className="flex items-center gap-3 mb-8">

@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const validated = contactSchema.parse(body)
     
-    const { data, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from('contact_messages')
       .insert({
         name: validated.name,
@@ -32,10 +32,11 @@ export async function POST(request: Request) {
       { success: true, message: 'Message sent successfully' },
       { status: 201 }
     )
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Contact API Error:', error)
+    const message = error instanceof Error ? error.message : 'Failed to send message'
     return NextResponse.json(
-      { error: error.message || 'Failed to send message' },
+      { error: message },
       { status: 500 }
     )
   }

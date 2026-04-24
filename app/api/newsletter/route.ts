@@ -35,18 +35,19 @@ export async function POST(request: Request) {
       { success: true, message: 'Subscribed successfully' },
       { status: 201 }
     )
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Newsletter API Error:', error)
 
-    if (error.name === 'ZodError') {
+    if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
-        { error: 'Invalid input data', details: error.errors },
+        { error: 'Invalid input data' },
         { status: 400 }
       )
     }
 
+    const message = error instanceof Error ? error.message : 'Subscription failed'
     return NextResponse.json(
-      { error: error.message || 'Subscription failed' },
+      { error: message },
       { status: 500 }
     )
   }

@@ -65,11 +65,11 @@ export async function POST(request: Request) {
       { success: true, message: 'Welcome to the quantum future!' },
       { status: 201 }
     )
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Waitlist API Fatal Error:', err)
-
+    const message = err instanceof Error ? err.message : 'An unexpected error occurred during registration'
     return NextResponse.json(
-      { error: err.message || 'An unexpected error occurred during registration' },
+      { error: message },
       { status: 500 }
     )
   }
