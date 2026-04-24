@@ -4,7 +4,10 @@ import React, { useEffect, useRef, useState } from "react"
 import gsap from "@/lib/gsap"
 import { Canvas } from "@react-three/fiber"
 import { Suspense } from "react"
-import AIChip from "@/components/3d/AIChip"
+import dynamic from "next/dynamic"
+
+// Dynamically import the heavy 3D model to prevent hydration bugs
+const AIChip = dynamic(() => import("@/components/3d/AIChip"), { ssr: false })
 import { motion } from "framer-motion"
 
 const ARCH_LAYERS = [

@@ -3,7 +3,17 @@
 import React from "react"
 import { motion } from "framer-motion"
 import { Play, ArrowRight } from "lucide-react"
-import Scene from "@/components/3d/Scene"
+import dynamic from "next/dynamic"
+
+// Dynamically import the heavy 3D scene to prevent hydration bugs and speed up initial page load
+const Scene = dynamic(() => import("@/components/3d/Scene"), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center bg-[#020205]">
+      <div className="w-16 h-16 rounded-full border-t-2 border-primary animate-spin shadow-[0_0_15px_rgba(0,240,255,0.5)]" />
+    </div>
+  )
+})
 import GlowButton from "@/components/ui/GlowButton"
 import VideoModal from "@/components/ui/VideoModal"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog"
