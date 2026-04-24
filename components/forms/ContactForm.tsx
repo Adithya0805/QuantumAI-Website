@@ -43,7 +43,7 @@ export default function ContactForm() {
       setShowSuccess(true)
     } catch (error) {
       toast.error("Transmission Error", {
-        description: error.message
+        description: error instanceof Error ? error.message : "Unknown error"
       })
     } finally {
       setIsSubmitting(false)

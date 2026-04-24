@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { demoSchema } from '@/lib/validations'
+import { resend } from '@/lib/resend'
 
 export async function POST(request: Request) {
   try {
@@ -27,6 +28,24 @@ export async function POST(request: Request) {
         { error: `Database error: ${error.message}` },
         { status: 500 }
       )
+    }
+
+    try {
+      await resend.emails.send({
+        from: 'QuantumAI <hello@yourdomain.com>',
+        to: validated.email,
+        subject: '✅ Demo Request Received',
+        html: `
+          <div style="font-family: sans-serif;">
+            <h2>Hi ${validated.name},</h2>
+            <p>We received your demo request for <strong>${validated.company}</strong>.</p>
+            <p>Our team will reach out within 24 hours to confirm your preferred date.</p>
+            <p><strong>Team size:</strong> ${validated.teamSize}</p>
+          </div>
+        `
+      })
+    } catch (emailError) {
+      console.error('Email send failed:', emailError)
     }
 
     return NextResponse.json(

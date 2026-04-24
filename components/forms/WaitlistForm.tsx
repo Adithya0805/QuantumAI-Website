@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { Loader2, ArrowRight, CheckCircle2, Share2, Mail } from "lucide-react"
 import { motion } from "framer-motion"
 import confetti from "canvas-confetti"
+import { track } from '@vercel/analytics'
 import { waitlistSchema, type WaitlistInput } from "@/lib/validations"
 
 export default function WaitlistForm() {
@@ -14,6 +15,8 @@ export default function WaitlistForm() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [submittedEmail, setSubmittedEmail] = useState("")
   const [serverError, setServerError] = useState<string | null>(null)
+  const [position, setPosition] = useState<number | null>(null)
+  const [alreadyExists, setAlreadyExists] = useState(false)
 
   const {
     register,
@@ -37,21 +40,23 @@ export default function WaitlistForm() {
       const result = await response.json()
 
       if (!response.ok) {
-        if (response.status === 409) {
-          setServerError("This email is already on the waitlist 🚀")
-          return // Fall through to finally for loading state
-        }
         throw new Error(result.error || "Submission failed")
       }
 
       setSubmittedEmail(data.email)
+      setPosition(result.count || null)
+      setAlreadyExists(result.already_exists || false)
       
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#00F0FF', '#FF6B00', '#B537F2']
-      })
+      track('waitlist_signup', { useCase: data.useCase, company: !!data.company })
+      
+      if (!result.already_exists) {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#00F0FF', '#FF6B00', '#B537F2']
+        })
+      }
 
       reset()
       setShowSuccess(true)
@@ -92,8 +97,13 @@ export default function WaitlistForm() {
 
         <div className="space-y-4">
           <h2 className="text-3xl font-black uppercase tracking-tighter text-white">
-            You&apos;re In The <span className="text-gradient-cyan">Quantum Future</span>
+            {alreadyExists ? "You're Already In The" : "You're In The"} <span className="text-gradient-cyan">Quantum Future</span>
           </h2>
+          {position && !alreadyExists && (
+            <p className="text-primary font-mono text-lg font-bold">
+              You&apos;re #{position} on the list — share to move up
+            </p>
+          )}
           <div className="flex items-center justify-center gap-2 text-white/50 font-mono text-sm">
             <Mail className="w-4 h-4" />
             <span>We&apos;ll reach you at <span className="text-white">{submittedEmail}</span></span>

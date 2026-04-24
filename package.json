@@ -37,6 +37,7 @@
     "react-hook-form": "7.55.0",
     "react-intersection-observer": "^10.0.3",
     "react-parallax-tilt": "^1.7.323",
+    "resend": "^6.12.2",
     "shiki": "^4.0.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",

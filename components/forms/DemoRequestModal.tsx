@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { Loader2, Calendar, Users, X, ArrowRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import * as Dialog from "@radix-ui/react-dialog"
+import { track } from '@vercel/analytics'
 import { demoSchema, type DemoInput } from "@/lib/validations"
 import SuccessModal from "@/components/ui/SuccessModal"
 
@@ -44,6 +45,9 @@ export default function DemoRequestModal({ isOpen, setIsOpen }: DemoRequestModal
       toast.success("Consultation Scheduled", {
         description: "Our quantum engineers will reach out on your preferred date."
       })
+      
+      track('demo_request', { teamSize: data.teamSize })
+      
       setIsOpen(false)
       reset()
       setShowSuccess(true)

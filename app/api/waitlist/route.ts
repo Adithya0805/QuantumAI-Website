@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { waitlistSchema } from '@/lib/validations'
+import { resend } from '@/lib/resend'
 
 export async function POST(request: Request) {
   // Check for environment variables at the start of the handler
@@ -15,9 +16,9 @@ export async function POST(request: Request) {
     if (!validationResult.success) {
       console.warn('Waitlist Validation Failed:', validationResult.error.format())
       return NextResponse.json(
-        { 
-          error: 'Invalid input data', 
-          details: validationResult.error.errors 
+        {
+          error: 'Invalid input data',
+          details: validationResult.error.errors
         },
         { status: 400 }
       )
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     // Insert into waitlist table
-    const { error } = await supabaseAdmin
+    const { data: insertedData, error } = await supabaseAdmin
       .from('waitlist')
       .insert({
         name,
@@ -43,6 +44,8 @@ export async function POST(request: Request) {
         company: company || null,
         use_case: useCase || null,
       })
+      .select()
+      .single()
 
     if (error) {
       console.error('Supabase Error (Waitlist Insert):', error)
@@ -50,8 +53,8 @@ export async function POST(request: Request) {
       // Handle duplicate email (PostgreSQL error code 23505)
       if (error.code === '23505') {
         return NextResponse.json(
-          { error: 'This email is already on the waitlist 🚀' },
-          { status: 409 }
+          { already_exists: true, message: "You're already on the list! We'll reach out soon." },
+          { status: 200 }
         )
       }
 
@@ -61,8 +64,32 @@ export async function POST(request: Request) {
       )
     }
 
+    const { count } = await supabaseAdmin
+      .from('waitlist')
+      .select('*', { count: 'exact', head: true })
+      .lte('created_at', insertedData?.created_at)
+
+    try {
+      await resend.emails.send({
+        from: 'QuantumAI <hello@yourdomain.com>',
+        to: email,
+        subject: '🚀 You\'re on the QuantumAI waitlist',
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #00F0FF;">Welcome, ${name}!</h1>
+            <p>You've secured your spot on the QuantumAI waitlist.</p>
+            <p>We'll notify you the moment early access opens.</p>
+            <hr/>
+            <p style="color: #888; font-size: 12px;">QuantumAI — Next-Gen AI Hardware</p>
+          </div>
+        `
+      })
+    } catch (emailError) {
+      console.error('Email send failed:', emailError)
+    }
+
     return NextResponse.json(
-      { success: true, message: 'Welcome to the quantum future!' },
+      { success: true, message: 'Welcome to the quantum future!', count },
       { status: 201 }
     )
   } catch (err: unknown) {

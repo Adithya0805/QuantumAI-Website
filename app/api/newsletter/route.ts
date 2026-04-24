@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { newsletterSchema } from '@/lib/validations'
+import { resend } from '@/lib/resend'
 
 export async function POST(request: Request) {
   try {
@@ -29,6 +30,17 @@ export async function POST(request: Request) {
         { error: `Database error: ${error.message}` },
         { status: 500 }
       )
+    }
+
+    try {
+      await resend.emails.send({
+        from: 'QuantumAI <hello@yourdomain.com>',
+        to: validated.email,
+        subject: '⚡ Subscribed to QuantumAI Updates',
+        html: `<p>You're now synced. Expect weekly deep-dives on quantum hardware.</p>`
+      })
+    } catch (emailError) {
+      console.error('Email send failed:', emailError)
     }
 
     return NextResponse.json(

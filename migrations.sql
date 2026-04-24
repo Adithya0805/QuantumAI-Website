@@ -109,3 +109,21 @@ CREATE TRIGGER set_updated_at_newsletter_subscribers BEFORE UPDATE ON newsletter
 
 DROP TRIGGER IF EXISTS set_updated_at_demo_requests ON demo_requests;
 CREATE TRIGGER set_updated_at_demo_requests BEFORE UPDATE ON demo_requests FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
+
+-- 7. RLS SELECT Policies
+DROP POLICY IF EXISTS "Admin read all" ON waitlist;
+CREATE POLICY "Admin read all" ON waitlist FOR SELECT USING (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "Admin read all" ON contact_messages;
+CREATE POLICY "Admin read all" ON contact_messages FOR SELECT USING (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "Admin read all" ON newsletter_subscribers;
+CREATE POLICY "Admin read all" ON newsletter_subscribers FOR SELECT USING (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "Admin read all" ON demo_requests;
+CREATE POLICY "Admin read all" ON demo_requests FOR SELECT USING (auth.role() = 'service_role');
+
+-- 8. Performance Indexes
+CREATE INDEX IF NOT EXISTS waitlist_created_at_idx ON waitlist(created_at DESC);
+CREATE INDEX IF NOT EXISTS demo_requests_status_idx ON demo_requests(status);
+CREATE INDEX IF NOT EXISTS newsletter_subscribers_active_idx ON newsletter_subscribers(is_active) WHERE is_active = true;

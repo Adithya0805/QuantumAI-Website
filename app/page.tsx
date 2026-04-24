@@ -12,6 +12,19 @@ import Footer from "@/components/ui/Footer";
 import CookieConsent from "@/components/ui/CookieConsent";
 import BackToTop from "@/components/ui/BackToTop";
 
+export const metadata = {
+  title: 'QuantumAI | Next-Gen AI Hardware',
+  description: 'Experience the power of edge quantum computing first-hand.',
+  openGraph: {
+    title: 'QuantumAI',
+    description: 'Experience the power of edge quantum computing first-hand.',
+    images: ['/og-image.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+  }
+}
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#0A0A0F]">

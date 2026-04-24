@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { Loader2, Zap, CheckCircle2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { track } from '@vercel/analytics'
 import { newsletterSchema, type NewsletterInput } from "@/lib/validations"
 
 export default function NewsletterForm() {
@@ -37,6 +38,9 @@ export default function NewsletterForm() {
       toast.success("Synchronized!", {
         description: "Welcome to the newsfeed."
       })
+      
+      track('newsletter_signup')
+      
       reset()
       setShowSuccess(true)
     } catch (error) {

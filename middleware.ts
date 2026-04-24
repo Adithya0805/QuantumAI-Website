@@ -60,7 +60,7 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin')) {
     if (!session) {
       // For now, redirect to home if no login page exists, or use local dev bypass
-      // return NextResponse.redirect(new URL('/', request.url))
+      return NextResponse.redirect(new URL('/', request.url))
       
       // LOGIC: If you want to force login, uncomment the redirect above.
       // For the initial setup, we permit access to see the UI, but usually this is blocked.
