@@ -3,6 +3,7 @@ import WhatIsQuantumAI from "@/components/sections/WhatIsQuantumAI";
 import QuantumCore from "@/components/sections/QuantumCore";
 import SearchSupremacy from "@/components/sections/SearchSupremacy";
 import CryptoTerminal from "@/components/sections/CryptoTerminal";
+import QuantumReadinessQuiz from "@/components/sections/QuantumReadinessQuiz";
 import Architecture from "@/components/sections/Architecture";
 import Demo from "@/components/sections/Demo";
 import Newsletter from "@/components/sections/Newsletter";
@@ -25,6 +26,7 @@ export default function Home() {
       <Architecture />
       
       {/* Conversion / Action */}
+      <div id="readiness-quiz"><QuantumReadinessQuiz /></div>
       <Demo />
       <Newsletter />
       <CTA />
