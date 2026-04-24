@@ -35,6 +35,15 @@ jobs:
       - name: Run unit tests
         run: npm run test
 
+      - name: Check env variables
+        run: |
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
+            echo "❌ SUPABASE URL missing"
+            exit 1
+          else
+            echo "✅ SUPABASE URL exists"
+          fi
+
       - name: Build project
         run: npm run build
 
