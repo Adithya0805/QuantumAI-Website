@@ -1,16 +1,10 @@
 import Hero from "@/components/sections/Hero";
 import WhatIsQuantumAI from "@/components/sections/WhatIsQuantumAI";
-import Stats from "@/components/sections/Stats";
-import Features from "@/components/sections/Features";
-import ScienceHotspots from "@/components/sections/ScienceHotspots";
-import Comparison from "@/components/sections/Comparison";
+import QuantumCore from "@/components/sections/QuantumCore";
+import SearchSupremacy from "@/components/sections/SearchSupremacy";
+import CryptoTerminal from "@/components/sections/CryptoTerminal";
 import Architecture from "@/components/sections/Architecture";
-import RealWorldApplications from "@/components/sections/RealWorldApplications";
 import Demo from "@/components/sections/Demo";
-import LatestNews from "@/components/sections/LatestNews";
-import Testimonials from "@/components/sections/Testimonials";
-import Pricing from "@/components/sections/Pricing";
-import FAQ from "@/components/sections/FAQ";
 import Newsletter from "@/components/sections/Newsletter";
 import CTA from "@/components/sections/CTA";
 import Footer from "@/components/ui/Footer";
@@ -21,20 +15,20 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#0A0A0F]">
       <Hero />
+      
+      {/* Deep-Tech Core Features */}
       <WhatIsQuantumAI />
-      <Stats />
-      <div id="features"><Features /></div>
-      <div id="science"><ScienceHotspots /></div>
-      <div id="comparison"><Comparison /></div>
+      <div id="quantum-core"><QuantumCore /></div>
+      <div id="search-supremacy"><SearchSupremacy /></div>
+      <div id="security"><CryptoTerminal /></div>
+      
       <Architecture />
-      <div id="applications"><RealWorldApplications /></div>
+      
+      {/* Conversion / Action */}
       <Demo />
-      <LatestNews />
-      <Testimonials />
-      <div id="pricing"><Pricing /></div>
-      <div id="faq"><FAQ /></div>
       <Newsletter />
       <CTA />
+      
       <Footer />
       
       {/* Global Overlays */}
@@ -43,4 +37,3 @@ export default function Home() {
     </main>
   );
 }
-
