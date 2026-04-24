@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { getResend } from '@/lib/resend'
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +10,7 @@ export async function POST(request: Request) {
 
     if (payload.type === 'UPDATE' && newRecord?.status !== oldRecord?.status) {
       if (newRecord.status === 'approved') {
-        await resend.emails.send({
+        await getResend().emails.send({
           from: 'QuantumAI <hello@yourdomain.com>',
           to: newRecord.email,
           subject: "Your Demo is Approved! 🚀",

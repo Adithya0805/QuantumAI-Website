@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { demoSchema } from '@/lib/validations'
-import { resend } from '@/lib/resend'
+import { getResend } from '@/lib/resend'
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: 'QuantumAI <hello@yourdomain.com>',
         to: validated.email,
         subject: '✅ Demo Request Received',

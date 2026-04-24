@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { waitlistSchema } from '@/lib/validations'
-import { resend } from '@/lib/resend'
+import { getResend } from '@/lib/resend'
 
 export async function POST(request: Request) {
   // Check for environment variables at the start of the handler
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
       .lte('created_at', insertedData?.created_at)
 
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: 'QuantumAI <hello@yourdomain.com>',
         to: email,
         subject: '🚀 You\'re on the QuantumAI waitlist',
