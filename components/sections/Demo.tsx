@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Terminal, Copy, Check, Play, RotateCcw, Cpu } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import DemoRequestModal from "@/components/forms/DemoRequestModal"
 import { ArrowRight } from "lucide-react"
+import { useReducedMotion } from "@/hooks/useReducedMotion"
 
 const languages = [
   { 
@@ -27,6 +28,7 @@ const languages = [
 ]
 
 export default function Demo() {
+  const prefersReduced = useReducedMotion()
   const [activeTab, setActiveTab] = useState(languages[0])
   const [isDemoOpen, setIsDemoOpen] = useState(false)
   const [displayText, setDisplayText] = useState("")
@@ -34,23 +36,39 @@ export default function Demo() {
   const [terminalLogs, setTerminalLogs] = useState<string[]>([])
   const [copied, setCopied] = useState(false)
   const [progress, setProgress] = useState(0)
+  const isMountedRef = useRef(true)
+  const copiedTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Memoize code blocks
+  const memoizedLanguages = useMemo(() => languages, [])
+
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+      if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
+    }
+  }, [])
 
   // Simulation Logic
   const runSimulation = async () => {
-    if (isSimulating) return
+    if (isSimulating || !isMountedRef.current) return
     setIsSimulating(true)
     setTerminalLogs(["[SYS] Initializing Quantum Core...", "[SYS] Calibrating Superposition States..."])
     setProgress(10)
 
     await new Promise(r => setTimeout(r, 800))
+    if (!isMountedRef.current) return
     setTerminalLogs(prev => [...prev, "[OK] Entanglement established.", "[OK] Coherence time: 504μs"])
     setProgress(40)
 
     await new Promise(r => setTimeout(r, 1000))
+    if (!isMountedRef.current) return
     setTerminalLogs(prev => [...prev, "[RUN] Executing Neural Gates...", "[RUN] Tensors mapped to ASIC..."])
     setProgress(75)
 
     await new Promise(r => setTimeout(r, 1200))
+    if (!isMountedRef.current) return
     setTerminalLogs(prev => [...prev, "[FINISH] Inference dynamic scale complete.", "[FINISH] Latency: 0.12ms"])
     setProgress(100)
     setIsSimulating(false)
@@ -67,22 +85,29 @@ export default function Demo() {
     navigator.clipboard.writeText(activeTab.code)
     setCopied(true)
     toast.info("Code copied to clipboard")
-    setTimeout(() => setCopied(false), 2000)
+    
+    if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
+    copiedTimeoutRef.current = setTimeout(() => {
+      if (isMountedRef.current) setCopied(false)
+    }, 2000)
   }
 
   // Effect for typing animation on tab change
   useEffect(() => {
     let currentIdx = 0
+    const speed = prefersReduced ? 30 : 15
     const interval = setInterval(() => {
       if (currentIdx <= activeTab.code.length) {
-        setDisplayText(activeTab.code.slice(0, currentIdx))
+        if (isMountedRef.current) {
+          setDisplayText(activeTab.code.slice(0, currentIdx))
+        }
         currentIdx++
       } else {
         clearInterval(interval)
       }
-    }, 10)
+    }, speed)
     return () => clearInterval(interval)
-  }, [activeTab])
+  }, [activeTab, prefersReduced])
 
   return (
     <section className="relative z-10 py-32 px-6 overflow-hidden bg-black">
@@ -188,7 +213,7 @@ export default function Demo() {
               {/* Tab Header */}
               <div className="px-8 py-6 border-b border-white/5 bg-white/[0.02] flex flex-wrap items-center justify-between gap-4">
                 <div className="flex gap-2">
-                  {languages.map((lang) => (
+                  {memoizedLanguages.map((lang) => (
                     <button
                       key={lang.id}
                       onClick={() => setActiveTab(lang)}

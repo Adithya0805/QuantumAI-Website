@@ -55,14 +55,12 @@ export default function QubitSimulator({ targetTheta, targetPhi }: QubitSimulato
     <group>
       {/* The Bloch Sphere itself */}
       <Sphere args={[2, 64, 64]}>
-        <meshPhysicalMaterial 
+        <meshStandardMaterial 
           color="#00f0ff"
           transparent
-          opacity={0.1}
-          roughness={0.1}
-          metalness={0.5}
-          transmission={0.9} // Glass-like effect
-          thickness={0.5}
+          opacity={0.2}
+          roughness={0.3}
+          metalness={0.8}
           side={THREE.DoubleSide}
         />
       </Sphere>

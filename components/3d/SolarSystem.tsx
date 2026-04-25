@@ -23,7 +23,7 @@ const PLANETS: PlanetData[] = [
   { name: "Neptune", distance: 26, size: 0.34, speed: 0.1, color: "#6081FF" },
 ]
 
-export default function SolarSystem({ isPaused = false }) {
+export default function SolarSystem({ isPaused = false, density = 1.0 }) {
   const planetRefs = useRef<THREE.Group[]>([])
 
   useFrame((state, delta) => {
@@ -37,9 +37,11 @@ export default function SolarSystem({ isPaused = false }) {
     })
   })
 
+  const visiblePlanets = PLANETS.slice(0, Math.ceil(PLANETS.length * density))
+
   return (
     <group>
-      {PLANETS.map((planet, i) => (
+      {visiblePlanets.map((planet, i) => (
         <group 
           key={planet.name} 
           ref={(el) => { if (el) planetRefs.current[i] = el }}

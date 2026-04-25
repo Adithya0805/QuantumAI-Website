@@ -171,9 +171,9 @@ export default function QuantumCore() {
                   autoRotateSpeed={0.5}
                 />
                 
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, 10, 10]} intensity={1} color="#00f0ff" />
-                <pointLight position={[-10, -10, -10]} intensity={0.5} color="#7000ff" />
+                <ambientLight intensity={0.8} />
+                <pointLight position={[10, 10, 10]} intensity={2} color="#00f0ff" />
+                <pointLight position={[-10, -10, -10]} intensity={1} color="#7000ff" />
                 
                 <QubitSimulator targetTheta={theta} targetPhi={phi} />
               </Suspense>

@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import LenisProvider from "@/components/providers/LenisProvider";
-import Navbar from "@/components/ui/Navbar";
-import CustomCursor from "@/components/ui/CustomCursor";
-import { Toaster } from "sonner";
-import ScrollProgress from "../components/ui/ScrollProgress";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import ClientLayout from "@/components/layout/ClientLayout";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk" });
@@ -27,24 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans bg-background text-foreground antialiased selection:bg-primary/30`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <LenisProvider>
-            <ScrollProgress />
-            <Navbar />
-            {children}
-            <CustomCursor />
-            <Toaster position="bottom-right" theme="dark" />
-            <Analytics />
-            <SpeedInsights />
-          </LenisProvider>
-        </ThemeProvider>
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );
 }
-
